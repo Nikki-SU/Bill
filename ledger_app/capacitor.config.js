@@ -1,7 +1,7 @@
 module.exports = {
   appId: 'com.ledger.app',
   appName: '账本',
-  webDir: '.',
+  webDir: 'www',
   bundledWebRuntime: false,
   server: {
     androidScheme: 'https',
