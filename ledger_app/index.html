@@ -2,403 +2,13 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f5f5f5">
 <title>账本</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: #f5f5f5;
-  color: #1a1a1a;
-  font-size: 14px;
-  overflow: hidden;
-}
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  max-width: 480px;
-  margin: 0 auto;
-  background: #f5f5f5;
-}
-.page { display: none; flex: 1; overflow-y: auto; padding-bottom: 60px; }
-.page.active { display: block; }
-
-/* 导航栏 */
-.nav-bar {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.nav-title {
-  flex: 1;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-}
-.nav-btn {
-  background: none;
-  border: none;
-  color: #1a1a1a;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-.nav-btn:active { opacity: 0.6; }
-
-/* 底部导航 */
-.bottom-nav {
-  display: flex;
-  height: 56px;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-width: 480px;
-  margin: 0 auto;
-}
-.bottom-nav button {
-  flex: 1;
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-}
-.bottom-nav button.active { color: #1a1a1a; font-weight: bold; }
-.bottom-nav button:active { background: #f0f0f0; }
-
-/* 主页面 */
-.home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 40px 20px;
-}
-.home-logo {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 60px;
-  color: #1a1a1a;
-}
-.home-btn {
-  width: 200px;
-  height: 50px;
-  margin: 12px 0;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-}
-.home-btn.primary { background: #1a1a1a; }
-.home-btn.secondary { background: #333; }
-.home-btn.tertiary { background: #555; }
-.home-btn:active { opacity: 0.85; }
-
-/* 卡片 */
-.card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 8px;
-  border: 1px solid #e8e8e8;
-}
-.card-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.card-label { color: #666; font-size: 12px; }
-.card-value { font-size: 14px; font-weight: bold; }
-.income { color: #1f7a1f; }
-.expense { color: #c72c2c; }
-
-/* 统计栏 */
-.stats-bar {
-  display: flex;
-  padding: 8px;
-  gap: 8px;
-}
-.stats-bar .card {
-  flex: 1;
-  text-align: center;
-  padding: 10px 8px;
-  margin: 0;
-}
-.stats-bar .card-value { font-size: 16px; }
-
-/* 输入区域 */
-.input-area {
-  padding: 12px 16px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
-}
-.type-switch {
-  display: flex;
-  height: 40px;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-.type-switch button {
-  flex: 1;
-  border: none;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #999;
-  background: #eee;
-}
-.type-switch button.income { background: #1f7a1f; color: white; }
-.type-switch button.expense { background: #c72c2c; color: white; }
-.input-row {
-  display: flex;
-  gap: 8px;
-}
-.input-row input {
-  flex: 1;
-  height: 44px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 15px;
-  background: #fafafa;
-  color: #1a1a1a;
-}
-.input-row input:focus { outline: none; border-color: #999; }
-.input-row input::placeholder { color: #aaa; }
-.input-row .add-btn {
-  width: 44px;
-  border: none;
-  border-radius: 6px;
-  background: #1a1a1a;
-  color: white;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.input-row .add-btn:active { opacity: 0.8; }
-
-/* 记录列表 */
-.record-list { padding: 4px 8px; }
-.record-item {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin: 4px 0;
-}
-.record-check {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 2px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
-  margin-right: 10px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.record-check.checked.income { background: #1f7a1f; border-color: #1f7a1f; color: white; }
-.record-check.checked.expense { background: #c72c2c; border-color: #c72c2c; color: white; }
-.record-check:not(.checked) { color: #bbb; }
-.record-info { flex: 1; min-width: 0; }
-.record-source {
-  font-size: 14px;
-  color: #1a1a1a;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.record-source.checked { text-decoration: line-through; color: #999; }
-.record-time { font-size: 11px; color: #999; margin-top: 2px; }
-.record-amount {
-  font-size: 15px;
-  font-weight: bold;
-  margin-right: 8px;
-}
-.record-actions { display: flex; gap: 4px; }
-.record-actions button {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  font-size: 13px;
-  cursor: pointer;
-}
-.btn-edit { background: #333; }
-.btn-delete { background: #c72c2c; }
-
-/* 日期分组 */
-.date-group { margin: 10px 0; }
-.date-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 12px;
-  font-size: 12px;
-  color: #666;
-}
-.date-header .summary { font-size: 11px; }
-
-/* 视图切换 */
-.view-switch {
-  display: flex;
-  padding: 8px;
-  gap: 4px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
-}
-.view-switch button {
-  flex: 1;
-  height: 36px;
-  border: none;
-  background: #eee;
-  font-size: 15px;
-  cursor: pointer;
-  color: #666;
-  border-radius: 4px;
-}
-.view-switch button.active {
-  background: #1a1a1a;
-  color: white;
-  font-weight: bold;
-}
-
-/* 导航日期 */
-.date-nav {
-  display: flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
-}
-.date-nav button {
-  width: 40px;
-  height: 36px;
-  border: none;
-  background: #eee;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.date-nav .date-label {
-  flex: 1;
-  text-align: center;
-  font-size: 15px;
-  font-weight: bold;
-}
-
-/* 空状态 */
-.empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: #999;
-  font-size: 14px;
-}
-
-/* 弹出框 */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-.modal-overlay.show { display: flex; }
-.modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  width: 100%;
-  max-width: 320px;
-}
-.modal h3 { text-align: center; margin-bottom: 16px; }
-.modal input {
-  width: 100%;
-  height: 44px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 15px;
-  margin-bottom: 12px;
-}
-.modal-actions { display: flex; gap: 10px; }
-.modal-actions button {
-  flex: 1;
-  height: 40px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.btn-primary { background: #1a1a1a; color: white; }
-.btn-secondary { background: #999; color: white; }
-.btn-danger { background: #c72c2c; color: white; }
-
-/* 年份视图 */
-.month-item {
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 6px 8px;
-}
-.month-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
-.month-stats { display: flex; gap: 8px; font-size: 12px; }
-.month-stats span { flex: 1; text-align: center; }
-
-/* 明细页过滤 */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
-}
-.filter-bar button {
-  width: 36px;
-  height: 32px;
-  border: none;
-  background: #eee;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.filter-bar .current {
-  flex: 1;
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  color: #1a1a1a;
-}
-
-/* 滚动条 */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
@@ -406,109 +16,145 @@ body {
   <div class="page active" id="page-home">
     <div class="home">
       <div class="home-logo">账本</div>
-      <button class="home-btn primary" onclick="showPage('record')">记账</button>
-      <button class="home-btn secondary" onclick="showPage('summary')">总结</button>
-      <button class="home-btn tertiary" onclick="showPage('detail')">明细</button>
+      <div class="home-sub">本地记账 · 数据在本机</div>
+      <button class="home-btn primary" onclick="App.showPage('record')">记 账</button>
+      <button class="home-btn secondary" onclick="App.showPage('summary')">总 结</button>
+      <button class="home-btn tertiary" onclick="App.showPage('detail')">明 细</button>
+      <div class="home-actions">
+        <button class="home-btn small" onclick="App.exportCSV()">导出CSV</button>
+        <button class="home-btn small" onclick="App.showAbout()">关于</button>
+      </div>
     </div>
   </div>
 
   <!-- 记账页面 -->
   <div class="page" id="page-record">
     <div class="nav-bar">
-      <button class="nav-btn" onclick="showPage('home')">← 返回</button>
+      <button class="nav-btn" onclick="App.showPage('home')">← 返回</button>
       <div class="nav-title">记账</div>
-      <div class="nav-btn" id="dateLabel" style="color:#666;font-weight:normal;"></div>
+      <div class="nav-date" id="recordDateLabel"></div>
     </div>
+
     <div class="stats-bar">
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">收入</div>
         <div class="card-value income" id="todayIncome">+0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">支出</div>
         <div class="card-value expense" id="todayExpense">-0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">结余</div>
         <div class="card-value" id="todayNet">+0.00</div>
       </div>
     </div>
+
     <div class="input-area">
       <div class="type-switch">
-        <button id="btnExpense" class="active expense" onclick="setType('expense')">支出</button>
-        <button id="btnIncome" onclick="setType('income')">收入</button>
+        <button id="btnExpense" class="active" onclick="App.setType('expense')">支出</button>
+        <button id="btnIncome" onclick="App.setType('income')">收入</button>
       </div>
       <div class="input-row">
-        <input type="text" id="inputSource" placeholder="物品/来源" autocomplete="off">
-        <input type="number" id="inputAmount" placeholder="金额" step="0.01" min="0" style="flex:0 0 90px;">
-        <button class="add-btn" onclick="addRecord()">+</button>
+        <input type="text" id="inputSource" placeholder="物品/来源" autocomplete="off" class="input-source">
+        <input type="number" id="inputAmount" placeholder="金额" step="0.01" min="0" class="input-amount">
+        <button class="add-btn" onclick="App.addRecord()">+</button>
       </div>
     </div>
-    <div id="recordList"></div>
+
+    <div class="section-title">今日记录</div>
+    <div id="recordList" class="record-list"></div>
   </div>
 
   <!-- 总结页面 -->
   <div class="page" id="page-summary">
     <div class="nav-bar">
-      <button class="nav-btn" onclick="showPage('home')">← 返回</button>
+      <button class="nav-btn" onclick="App.showPage('home')">← 返回</button>
       <div class="nav-title">总结</div>
-      <button class="nav-btn" onclick="exportCSV()">导出</button>
+      <button class="nav-btn" onclick="App.exportCSV()">导出</button>
     </div>
+
     <div class="view-switch">
-      <button id="viewDay" class="active" onclick="setSummaryView('day')">日</button>
-      <button id="viewMonth" onclick="setSummaryView('month')">月</button>
-      <button id="viewYear" onclick="setSummaryView('year')">年</button>
+      <button id="viewDay" class="active" onclick="App.setSummaryView('day')">日</button>
+      <button id="viewMonth" onclick="App.setSummaryView('month')">月</button>
+      <button id="viewYear" onclick="App.setSummaryView('year')">年</button>
     </div>
+
     <div class="date-nav">
-      <button onclick="navSummary(-1)">◀</button>
+      <button onclick="App.navSummary(-1)">◀</button>
       <div class="date-label" id="summaryDateLabel"></div>
-      <button onclick="navSummary(1)">▶</button>
+      <button onclick="App.navSummary(1)">▶</button>
     </div>
+
     <div class="stats-bar">
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">收入</div>
         <div class="card-value income" id="summaryIncome">+0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">支出</div>
         <div class="card-value expense" id="summaryExpense">-0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">净收入</div>
         <div class="card-value" id="summaryNet">+0.00</div>
       </div>
     </div>
-    <div id="summaryContent"></div>
+
+    <div id="summaryContent" class="content-area"></div>
   </div>
 
   <!-- 明细页面 -->
   <div class="page" id="page-detail">
     <div class="nav-bar">
-      <button class="nav-btn" onclick="showPage('home')">← 返回</button>
+      <button class="nav-btn" onclick="App.showPage('home')">← 返回</button>
       <div class="nav-title">明细</div>
-      <button class="nav-btn" onclick="showStats()">统计</button>
+      <button class="nav-btn" onclick="App.showStats()">统计</button>
     </div>
+
     <div class="filter-bar">
-      <button onclick="detailNav(-1)">◀</button>
+      <button onclick="App.detailNav(-1)">◀</button>
       <div class="current" id="detailLabel"></div>
-      <button onclick="detailNav(1)">▶</button>
-      <button onclick="toggleShowAll()" id="showAllBtn" style="margin-left:8px;">全部</button>
+      <button onclick="App.detailNav(1)">▶</button>
+      <button class="toggle-btn" id="showAllBtn" onclick="App.toggleShowAll()">全部</button>
     </div>
+
     <div class="stats-bar">
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">收入</div>
         <div class="card-value income" id="detailIncome">+0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">支出</div>
         <div class="card-value expense" id="detailExpense">-0.00</div>
       </div>
-      <div class="card">
+      <div class="card stat">
         <div class="card-label">净收入</div>
         <div class="card-value" id="detailNet">+0.00</div>
       </div>
     </div>
-    <div id="detailContent"></div>
+
+    <div id="detailContent" class="content-area"></div>
+  </div>
+
+  <!-- 记账导航 -->
+  <div class="tab-bar">
+    <button class="tab-btn" id="tabHome" onclick="App.showPage('home')">
+      <span class="tab-icon">◉</span>
+      <span class="tab-label">首页</span>
+    </button>
+    <button class="tab-btn" id="tabRecord" onclick="App.showPage('record')">
+      <span class="tab-icon">✎</span>
+      <span class="tab-label">记账</span>
+    </button>
+    <button class="tab-btn" id="tabSummary" onclick="App.showPage('summary')">
+      <span class="tab-icon">▤</span>
+      <span class="tab-label">总结</span>
+    </button>
+    <button class="tab-btn" id="tabDetail" onclick="App.showPage('detail')">
+      <span class="tab-icon">☰</span>
+      <span class="tab-label">明细</span>
+    </button>
   </div>
 </div>
 
@@ -516,11 +162,16 @@ body {
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <h3>编辑记录</h3>
+    <div class="type-switch" style="margin-bottom:12px;">
+      <button id="editExpense" class="active" onclick="App.setEditType('expense')">支出</button>
+      <button id="editIncome" onclick="App.setEditType('income')">收入</button>
+    </div>
     <input type="text" id="editSource" placeholder="来源/物品">
     <input type="number" id="editAmount" placeholder="金额" step="0.01" min="0">
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeEdit()">取消</button>
-      <button class="btn-primary" onclick="saveEdit()">保存</button>
+      <button class="btn-secondary" onclick="App.closeEdit()">取消</button>
+      <button class="btn-danger" onclick="App.deleteEdit()">删除</button>
+      <button class="btn-primary" onclick="App.saveEdit()">保存</button>
     </div>
   </div>
 </div>
@@ -529,695 +180,39 @@ body {
 <div class="modal-overlay" id="statsModal">
   <div class="modal">
     <h3>数据统计</h3>
-    <div id="statsContent" style="font-size:14px; line-height:1.8;"></div>
-    <div class="modal-actions" style="margin-top:16px;">
-      <button class="btn-primary" onclick="closeStats()">关闭</button>
+    <div id="statsContent" class="stats-content"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="App.closeStats()">关闭</button>
+      <button class="btn-primary" onclick="App.exportCSV()">导出CSV</button>
     </div>
   </div>
 </div>
 
-<script>
-// ==================== 数据存储 ====================
-const STORAGE_KEY = 'ledger_records';
+<!-- 关于弹窗 -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal">
+    <h3>账本</h3>
+    <div class="about-content">
+      <p>极简本地记账应用</p>
+      <p class="version">版本 1.0.0</p>
+      <hr>
+      <p>📊 本地存储，隐私安全</p>
+      <p>📱 离线使用，无需网络</p>
+      <p>🔄 CSV格式，方便导入导出</p>
+      <p>💡 收入绿色，支出红色</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="App.closeAbout()">确定</button>
+    </div>
+  </div>
+</div>
 
-function loadRecords() {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
+<!-- 加载提示 -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">加载中...</div>
+</div>
 
-function saveRecords(records) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-}
-
-function getNextId() {
-  const records = loadRecords();
-  return records.length > 0 ? Math.max(...records.map(r => r.id)) + 1 : 1;
-}
-
-function addRecord(source, amount, type) {
-  const records = loadRecords();
-  const now = new Date();
-  const record = {
-    id: getNextId(),
-    date: formatDate(now),
-    time: formatTime(now),
-    source: source,
-    amount: parseFloat(amount),
-    type: type,
-    checked: false
-  };
-  records.push(record);
-  saveRecords(records);
-  return record;
-}
-
-function updateRecord(id, updates) {
-  const records = loadRecords();
-  const idx = records.findIndex(r => r.id === id);
-  if (idx !== -1) {
-    records[idx] = { ...records[idx], ...updates };
-    saveRecords(records);
-    return true;
-  }
-  return false;
-}
-
-function deleteRecord(id) {
-  const records = loadRecords().filter(r => r.id !== id);
-  saveRecords(records);
-}
-
-function toggleChecked(id) {
-  const records = loadRecords();
-  const record = records.find(r => r.id === id);
-  if (record) {
-    record.checked = !record.checked;
-    saveRecords(records);
-  }
-}
-
-function getRecordsByDate(dateStr) {
-  return loadRecords().filter(r => r.date === dateStr);
-}
-
-function getRecordsByMonth(year, month) {
-  const prefix = `${year}-${String(month).padStart(2, '0')}`;
-  return loadRecords().filter(r => r.date.startsWith(prefix));
-}
-
-function getRecordsByYear(year) {
-  return loadRecords().filter(r => r.date.startsWith(String(year)));
-}
-
-function getDateSummary(dateStr) {
-  const records = getRecordsByDate(dateStr);
-  const income = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const expense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  const weekday = ['周日','周一','周二','周三','周四','周五','周六'][new Date(dateStr).getDay()];
-  return { date: dateStr, weekday, income, expense, net: income - expense, count: records.length };
-}
-
-function getMonthSummary(year, month) {
-  const records = getRecordsByMonth(year, month);
-  const income = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const expense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  return { year, month, income, expense, net: income - expense };
-}
-
-function getYearSummary(year) {
-  const records = getRecordsByYear(year);
-  const totalIncome = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const totalExpense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  
-  const monthly = {};
-  for (let m = 1; m <= 12; m++) {
-    const m_records = getRecordsByMonth(year, m);
-    const m_income = m_records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-    const m_expense = m_records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-    monthly[m] = { income: m_income, expense: m_expense, net: m_income - m_expense };
-  }
-  
-  return { year, totalIncome, totalExpense, totalNet: totalIncome - totalExpense, monthly };
-}
-
-// ==================== 工具函数 ====================
-function formatDate(date) {
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-}
-
-function formatTime(date) {
-  return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}`;
-}
-
-function formatMoney(n) {
-  return n.toFixed(2);
-}
-
-function showPage(pageName) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(`page-${pageName}`).classList.add('active');
-  
-  if (pageName === 'record') refreshRecordPage();
-  if (pageName === 'summary') refreshSummaryPage();
-  if (pageName === 'detail') refreshDetailPage();
-}
-
-// ==================== 记账页面 ====================
-let currentType = 'expense';
-let editingId = null;
-
-function setType(type) {
-  currentType = type;
-  const btnExpense = document.getElementById('btnExpense');
-  const btnIncome = document.getElementById('btnIncome');
-  
-  if (type === 'expense') {
-    btnExpense.className = 'active expense';
-    btnIncome.className = '';
-  } else {
-    btnIncome.className = 'active income';
-    btnExpense.className = '';
-  }
-}
-
-function addRecord() {
-  const source = document.getElementById('inputSource').value.trim();
-  const amountText = document.getElementById('inputAmount').value.trim();
-  
-  if (!source) { alert('请输入物品/来源名称'); return; }
-  if (!amountText) { alert('请输入金额'); return; }
-  
-  const amount = parseFloat(amountText);
-  if (amount <= 0) { alert('金额必须大于0'); return; }
-  
-  addRecord.__proto__; // just to suppress warning
-  const db = loadRecords();
-  const now = new Date();
-  const record = {
-    id: getNextId(),
-    date: formatDate(now),
-    time: formatTime(now),
-    source: source,
-    amount: amount,
-    type: currentType,
-    checked: false
-  };
-  db.push(record);
-  saveRecords(db);
-  
-  document.getElementById('inputSource').value = '';
-  document.getElementById('inputAmount').value = '';
-  document.getElementById('inputSource').focus();
-  
-  refreshRecordPage();
-}
-
-function refreshRecordPage() {
-  const now = new Date();
-  const today = formatDate(now);
-  const weekday = ['周日','周一','周二','周三','周四','周五','周六'][now.getDay()];
-  
-  document.getElementById('dateLabel').textContent = `${today} ${weekday}`;
-  
-  const todayRecords = getRecordsByDate(today);
-  const income = todayRecords.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const expense = todayRecords.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  const net = income - expense;
-  
-  document.getElementById('todayIncome').textContent = `+${formatMoney(income)}`;
-  document.getElementById('todayExpense').textContent = `-${formatMoney(expense)}`;
-  const netEl = document.getElementById('todayNet');
-  netEl.textContent = `${net >= 0 ? '+' : ''}${formatMoney(net)}`;
-  netEl.style.color = net >= 0 ? '' : '#c72c2c';
-  
-  // 渲染记录列表
-  const listEl = document.getElementById('recordList');
-  listEl.innerHTML = '';
-  
-  if (todayRecords.length === 0) {
-    listEl.innerHTML = '<div class="empty">今日暂无记录</div>';
-    return;
-  }
-  
-  const sorted = [...todayRecords].sort((a, b) => b.time.localeCompare(a.time));
-  sorted.forEach(record => {
-    listEl.appendChild(createRecordItem(record));
-  });
-}
-
-function createRecordItem(record) {
-  const item = document.createElement('div');
-  item.className = 'record-item';
-  
-  const check = document.createElement('div');
-  check.className = `record-check ${record.type}${record.checked ? ' checked' : ''}`;
-  check.textContent = record.checked ? '✓' : '○';
-  check.onclick = () => { toggleChecked(record.id); refreshRecordPage(); };
-  
-  const info = document.createElement('div');
-  info.className = 'record-info';
-  
-  const source = document.createElement('div');
-  source.className = `record-source${record.checked ? ' checked' : ''}`;
-  source.textContent = record.source;
-  info.appendChild(source);
-  
-  const time = document.createElement('div');
-  time.className = 'record-time';
-  time.textContent = record.time.substring(0, 5);
-  info.appendChild(time);
-  
-  const amount = document.createElement('div');
-  amount.className = `record-amount ${record.type}`;
-  amount.style.color = record.type === 'income' ? '#1f7a1f' : '#c72c2c';
-  amount.textContent = `${record.type === 'income' ? '+' : '-'}${formatMoney(record.amount)}`;
-  
-  const actions = document.createElement('div');
-  actions.className = 'record-actions';
-  
-  const btnEdit = document.createElement('button');
-  btnEdit.className = 'btn-edit';
-  btnEdit.textContent = '✎';
-  btnEdit.onclick = () => openEdit(record.id);
-  
-  const btnDel = document.createElement('button');
-  btnDel.className = 'btn-delete';
-  btnDel.textContent = '×';
-  btnDel.onclick = () => {
-    if (confirm('确定要删除这条记录吗？')) {
-      deleteRecord(record.id);
-      refreshRecordPage();
-    }
-  };
-  
-  actions.appendChild(btnEdit);
-  actions.appendChild(btnDel);
-  
-  item.appendChild(check);
-  item.appendChild(info);
-  item.appendChild(amount);
-  item.appendChild(actions);
-  
-  return item;
-}
-
-// ==================== 编辑功能 ====================
-function openEdit(id) {
-  const records = loadRecords();
-  const record = records.find(r => r.id === id);
-  if (!record) return;
-  
-  editingId = id;
-  document.getElementById('editSource').value = record.source;
-  document.getElementById('editAmount').value = record.amount;
-  document.getElementById('editModal').classList.add('show');
-}
-
-function closeEdit() {
-  editingId = null;
-  document.getElementById('editModal').classList.remove('show');
-}
-
-function saveEdit() {
-  if (editingId === null) return;
-  
-  const source = document.getElementById('editSource').value.trim();
-  const amountText = document.getElementById('editAmount').value.trim();
-  
-  if (!source) { alert('请输入来源/物品名称'); return; }
-  if (!amountText) { alert('请输入金额'); return; }
-  
-  const amount = parseFloat(amountText);
-  if (amount <= 0) { alert('金额必须大于0'); return; }
-  
-  updateRecord(editingId, { source, amount });
-  closeEdit();
-  refreshRecordPage();
-}
-
-// ==================== 总结页面 ====================
-let summaryView = 'day';
-let summaryYear, summaryMonth, summaryDate;
-
-function initSummaryDate() {
-  const now = new Date();
-  summaryYear = now.getFullYear();
-  summaryMonth = now.getMonth() + 1;
-  summaryDate = formatDate(now);
-}
-
-function setSummaryView(view) {
-  summaryView = view;
-  document.querySelectorAll('#viewDay, #viewMonth, #viewYear').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`).classList.add('active');
-  
-  const now = new Date();
-  if (view === 'day') { summaryDate = formatDate(now); }
-  else if (view === 'month') { summaryYear = now.getFullYear(); summaryMonth = now.getMonth() + 1; }
-  else { summaryYear = now.getFullYear(); }
-  
-  refreshSummaryPage();
-}
-
-function navSummary(direction) {
-  if (summaryView === 'day') {
-    const d = new Date(summaryDate);
-    d.setDate(d.getDate() + direction);
-    summaryDate = formatDate(d);
-  } else if (summaryView === 'month') {
-    summaryMonth += direction;
-    if (summaryMonth < 1) { summaryMonth = 12; summaryYear--; }
-    if (summaryMonth > 12) { summaryMonth = 1; summaryYear++; }
-  } else {
-    summaryYear += direction;
-  }
-  refreshSummaryPage();
-}
-
-function refreshSummaryPage() {
-  initSummaryDateOnce();
-  
-  // 更新标签
-  const label = document.getElementById('summaryDateLabel');
-  if (summaryView === 'day') {
-    const d = new Date(summaryDate);
-    const weekday = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-    label.textContent = `${summaryDate} ${weekday}`;
-  } else if (summaryView === 'month') {
-    label.textContent = `${summaryYear}年${summaryMonth}月`;
-  } else {
-    label.textContent = `${summaryYear}年`;
-  }
-  
-  // 更新统计
-  let income, expense, net;
-  if (summaryView === 'day') {
-    const s = getDateSummary(summaryDate);
-    income = s.income; expense = s.expense; net = s.net;
-  } else if (summaryView === 'month') {
-    const s = getMonthSummary(summaryYear, summaryMonth);
-    income = s.income; expense = s.expense; net = s.net;
-  } else {
-    const s = getYearSummary(summaryYear);
-    income = s.totalIncome; expense = s.totalExpense; net = s.totalNet;
-  }
-  
-  document.getElementById('summaryIncome').textContent = `+${formatMoney(income)}`;
-  document.getElementById('summaryExpense').textContent = `-${formatMoney(expense)}`;
-  const netEl = document.getElementById('summaryNet');
-  netEl.textContent = `${net >= 0 ? '+' : ''}${formatMoney(net)}`;
-  netEl.style.color = net >= 0 ? '#1a1a1a' : '#c72c2c';
-  
-  // 渲染内容
-  const content = document.getElementById('summaryContent');
-  content.innerHTML = '';
-  
-  if (summaryView === 'day') {
-    const records = getRecordsByDate(summaryDate).sort((a, b) => a.time.localeCompare(b.time));
-    if (records.length === 0) {
-      content.innerHTML = '<div class="empty">该日暂无记录</div>';
-      return;
-    }
-    records.forEach(r => content.appendChild(createSummaryItem(r)));
-  } else if (summaryView === 'month') {
-    const records = getRecordsByMonth(summaryYear, summaryMonth);
-    if (records.length === 0) {
-      content.innerHTML = '<div class="empty">该月暂无记录</div>';
-      return;
-    }
-    const grouped = {};
-    records.forEach(r => {
-      if (!grouped[r.date]) grouped[r.date] = [];
-      grouped[r.date].push(r);
-    });
-    
-    Object.keys(grouped).sort().reverse().forEach(date => {
-      const dayRecords = grouped[date];
-      const income = dayRecords.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-      const expense = dayRecords.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-      
-      const header = document.createElement('div');
-      header.className = 'date-header';
-      const d = new Date(date);
-      const weekday = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-      header.innerHTML = `<span>${date} ${weekday}</span><span class="summary">收+${formatMoney(income)} 支-${formatMoney(expense)}</span>`;
-      content.appendChild(header);
-      
-      dayRecords.sort((a, b) => a.time.localeCompare(b.time))
-      dayRecords.forEach(r => content.appendChild(createSummaryItem(r)));
-    });
-  } else {
-    const yearData = getYearSummary(summaryYear);
-    const hasData = Object.values(yearData.monthly).some(m => m.income > 0 || m.expense > 0);
-    if (!hasData) {
-      content.innerHTML = '<div class="empty">该年暂无记录</div>';
-      return;
-    }
-    
-    const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-    for (let m = 1; m <= 12; m++) {
-      const data = yearData.monthly[m];
-      if (data.income === 0 && data.expense === 0) continue;
-      
-      const item = document.createElement('div');
-      item.className = 'month-item';
-      const netColor = data.net >= 0 ? '#1a1a1a' : '#c72c2c';
-      item.innerHTML = `
-        <div class="month-name">${monthNames[m-1]}</div>
-        <div class="month-stats">
-          <span>收 +${formatMoney(data.income)}</span>
-          <span>支 -${formatMoney(data.expense)}</span>
-          <span style="color:${netColor};font-weight:bold;">净 ${data.net >= 0 ? '+' : ''}${formatMoney(data.net)}</span>
-        </div>
-      `;
-      content.appendChild(item);
-    }
-  }
-}
-
-function createSummaryItem(record) {
-  const item = document.createElement('div');
-  item.className = 'card';
-  item.style.display = 'flex';
-  item.style.alignItems = 'center';
-  item.style.padding = '8px 12px';
-  item.style.margin = '2px 8px';
-  item.style.borderRadius = '6px';
-  
-  const isIncome = record.type === 'income';
-  const icon = isIncome ? '↓' : '↑';
-  const color = isIncome ? '#1f7a1f' : '#c72c2c';
-  
-  item.innerHTML = `
-    <span style="color:${color};font-weight:bold;margin-right:8px;">${icon}</span>
-    <span style="flex:1;font-size:13px;">${record.source}</span>
-    <span style="font-size:11px;color:#999;margin-right:10px;">${record.time.substring(0,5)}</span>
-    <span style="color:${color};font-weight:bold;font-size:13px;">${isIncome ? '+' : '-'}${formatMoney(record.amount)}</span>
-  `;
-  
-  return item;
-}
-
-let summaryDateInitialized = false;
-function initSummaryDateOnce() {
-  if (!summaryDateInitialized) {
-    initSummaryDate();
-    summaryDateInitialized = true;
-  }
-}
-
-// ==================== 明细页面 ====================
-let detailYear, detailMonth, detailShowAll = false;
-
-function initDetailDate() {
-  const now = new Date();
-  detailYear = now.getFullYear();
-  detailMonth = now.getMonth() + 1;
-}
-
-function detailNav(direction) {
-  detailShowAll = false;
-  detailMonth += direction;
-  if (detailMonth < 1) { detailMonth = 12; detailYear--; }
-  if (detailMonth > 12) { detailMonth = 1; detailYear++; }
-  refreshDetailPage();
-}
-
-function toggleShowAll() {
-  detailShowAll = !detailShowAll;
-  document.getElementById('showAllBtn').style.background = detailShowAll ? '#1a1a1a' : '#eee';
-  refreshDetailPage();
-}
-
-function refreshDetailPage() {
-  initDetailDateOnce();
-  
-  const label = document.getElementById('detailLabel');
-  label.textContent = detailShowAll ? '全部记录' : `${detailYear}年${detailMonth}月`;
-  
-  // 获取记录
-  let records;
-  if (detailShowAll) {
-    records = loadRecords();
-  } else {
-    records = getRecordsByMonth(detailYear, detailMonth);
-  }
-  
-  const income = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const expense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  const net = income - expense;
-  
-  document.getElementById('detailIncome').textContent = `+${formatMoney(income)}`;
-  document.getElementById('detailExpense').textContent = `-${formatMoney(expense)}`;
-  const netEl = document.getElementById('detailNet');
-  netEl.textContent = `${net >= 0 ? '+' : ''}${formatMoney(net)}`;
-  netEl.style.color = net >= 0 ? '#1a1a1a' : '#c72c2c';
-  
-  // 渲染
-  const content = document.getElementById('detailContent');
-  content.innerHTML = '';
-  
-  if (records.length === 0) {
-    content.innerHTML = '<div class="empty">暂无记录</div>';
-    return;
-  }
-  
-  // 按日期分组
-  const grouped = {};
-  records.forEach(r => {
-    if (!grouped[r.date]) grouped[r.date] = [];
-    grouped[r.date].push(r);
-  });
-  
-  Object.keys(grouped).sort().reverse().forEach(date => {
-    const dayRecords = grouped[date];
-    const summary = getDateSummary(date);
-    
-    const group = document.createElement('div');
-    group.className = 'date-group';
-    
-    const header = document.createElement('div');
-    header.className = 'date-header';
-    header.innerHTML = `
-      <span>${date} ${summary.weekday}</span>
-      <span class="summary">收+${formatMoney(summary.income)} 支-${formatMoney(summary.expense)}</span>
-    `;
-    group.appendChild(header);
-    
-    dayRecords.sort((a, b) => b.time.localeCompare(a.time));
-    dayRecords.forEach(r => group.appendChild(createDetailItem(r)));
-    
-    content.appendChild(group);
-  });
-}
-
-function createDetailItem(record) {
-  const item = document.createElement('div');
-  item.className = 'record-item';
-  
-  const isIncome = record.type === 'income';
-  const color = isIncome ? '#1f7a1f' : '#c72c2c';
-  
-  item.innerHTML = `
-    <span style="color:${color};font-size:10px;margin-right:4px;">${isIncome ? '↓' : '↑'}</span>
-    <span style="flex:1;font-size:13px;">${record.source}</span>
-    <span style="font-size:11px;color:#999;margin-right:6px;">${record.time.substring(0,5)}</span>
-    <span style="color:${color};font-weight:bold;font-size:13px;margin-right:4px;">${isIncome ? '+' : '-'}${formatMoney(record.amount)}</span>
-  `;
-  
-  const actions = document.createElement('div');
-  actions.className = 'record-actions';
-  actions.style.marginRight = '8px';
-  
-  const btnEdit = document.createElement('button');
-  btnEdit.className = 'btn-edit';
-  btnEdit.textContent = '✎';
-  btnEdit.onclick = (e) => { e.stopPropagation(); openEdit(record.id); };
-  
-  const btnDel = document.createElement('button');
-  btnDel.className = 'btn-delete';
-  btnDel.textContent = '×';
-  btnDel.onclick = (e) => {
-    e.stopPropagation();
-    if (confirm('确定要删除这条记录吗？')) {
-      deleteRecord(record.id);
-      refreshDetailPage();
-    }
-  };
-  
-  actions.appendChild(btnEdit);
-  actions.appendChild(btnDel);
-  item.appendChild(actions);
-  
-  return item;
-}
-
-let detailDateInitialized = false;
-function initDetailDateOnce() {
-  if (!detailDateInitialized) {
-    initDetailDate();
-    detailDateInitialized = true;
-  }
-}
-
-// ==================== 统计弹窗 ====================
-function showStats() {
-  const records = loadRecords();
-  const totalIncome = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
-  const totalExpense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
-  const totalNet = totalIncome - totalExpense;
-  
-  document.getElementById('statsContent').innerHTML = `
-    <div style="margin-bottom:12px;">总记录数: ${records.length}</div>
-    <div style="color:#1f7a1f;margin-bottom:8px;">总收入: +${formatMoney(totalIncome)}</div>
-    <div style="color:#c72c2c;margin-bottom:8px;">总支出: -${formatMoney(totalExpense)}</div>
-    <div style="font-weight:bold;margin-bottom:16px;">净收入: ${totalNet >= 0 ? '+' : ''}${formatMoney(totalNet)}</div>
-    <div style="font-size:11px;color:#999;">数据存储: 本地浏览器</div>
-  `;
-  
-  document.getElementById('statsModal').classList.add('show');
-}
-
-function closeStats() {
-  document.getElementById('statsModal').classList.remove('show');
-}
-
-// ==================== CSV导出 ====================
-function exportCSV() {
-  const records = loadRecords();
-  if (records.length === 0) {
-    alert('暂无数据可导出');
-    return;
-  }
-  
-  let csv = 'id,date,time,source,amount,type,checked\n';
-  records.forEach(r => {
-    csv += `${r.id},${r.date},${r.time},"${r.source.replace(/"/g, '""')}",${r.amount},${r.type},${r.checked ? 'true' : 'false'}\n`;
-  });
-  
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `账本_${formatDate(new Date())}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-  
-  alert('导出成功！');
-}
-
-// ==================== 初始化 ====================
-document.addEventListener('DOMContentLoaded', () => {
-  // 默认显示主页面
-  showPage('home');
-  
-  // 输入框回车添加
-  document.getElementById('inputSource').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') document.getElementById('inputAmount').focus();
-  });
-  
-  document.getElementById('inputAmount').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addRecord();
-  });
-});
-
-// 暴露到全局
-window.showPage = showPage;
-window.setType = setType;
-window.addRecord = addRecord;
-window.toggleChecked = toggleChecked;
-window.openEdit = openEdit;
-window.closeEdit = closeEdit;
-window.saveEdit = saveEdit;
-window.setSummaryView = setSummaryView;
-window.navSummary = navSummary;
-window.refreshSummaryPage = refreshSummaryPage;
-window.detailNav = detailNav;
-window.toggleShowAll = toggleShowAll;
-window.refreshDetailPage = refreshDetailPage;
-window.showStats = showStats;
-window.closeStats = closeStats;
-window.exportCSV = exportCSV;
-</script>
+<script src="app.js"></script>
 </body>
 </html>
