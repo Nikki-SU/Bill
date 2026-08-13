@@ -1,6 +1,4 @@
-import { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
+module.exports = {
   appId: 'com.ledger.app',
   appName: '账本',
   webDir: '.',
@@ -24,5 +22,3 @@ const config: CapacitorConfig = {
     }
   }
 };
-
-export default config;
