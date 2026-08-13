@@ -29,10 +29,10 @@ if %errorlevel% neq 0 (
     echo [错误] 应用运行失败
     echo.
     echo 可能的原因:
-    echo 1. Python 版本过旧或过新
+    echo 1. Python 版本不兼容
     echo 2. Tkinter 未正确安装
     echo.
-    echo 建议: 重新安装 Python 3.10-3.13 版本
+    echo 建议: 安装 Python 3.10-3.13 版本
     echo 下载地址: https://www.python.org/downloads/
     pause
 )

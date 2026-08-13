@@ -308,8 +308,7 @@ class LedgerApp:
         btn_config = {
             'font': ('Microsoft YaHei', 16),
             'width': 18,
-            'height': 2,
-            'border': 'none',
+            'bd': 0,
             'cursor': 'hand2',
         }
         
