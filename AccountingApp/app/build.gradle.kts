@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
 }
 
 android {
@@ -55,9 +56,7 @@ dependencies {
     // Room 本地数据库（持久化，替代 localStorage）
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1") // Kotlin 用 kapt，下面声明
-    // 注意：Kotlin 需要使用 kapt 插件，但为简化（避免额外插件依赖），这里用 annotationProcessor 不生效
-    // 真正项目请改用 id("kotlin-kapt") 插件 + kapt("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

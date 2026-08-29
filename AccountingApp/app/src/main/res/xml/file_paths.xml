@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 导出的 CSV 临时文件放在 cache 目录，通过 FileProvider 分享 -->
+    <cache-path name="csv_exports" path="csv/" />
+</paths>
