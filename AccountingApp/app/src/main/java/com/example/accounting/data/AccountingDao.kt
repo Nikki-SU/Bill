@@ -91,4 +91,22 @@ interface AccountingDao {
     /** 取小于给定月份的最大月份（即上一月），用于查上月的结转出。 */
     @Query("SELECT * FROM monthly_summary WHERE month < :month ORDER BY month DESC LIMIT 1")
     suspend fun getPreviousMonthlySummary(month: String): MonthlySummary?
+
+    /** 取所有早于给定月份的工作记录（带商品），用于按月累计结转链。 */
+    @Query(
+        """
+        SELECT wr.id AS id, wr.productId AS productId, p.name AS productName,
+               p.unitPrice AS unitPrice, wr.quantity AS quantity,
+               wr.date AS date, wr.note AS note
+        FROM work_records wr
+        INNER JOIN products p ON wr.productId = p.id
+        WHERE substr(wr.date, 1, 7) < :month
+        ORDER BY wr.date
+        """
+    )
+    suspend fun getPastWorkRecordsWithProduct(month: String): List<WorkRecordWithProduct>
+
+    /** 取所有早于给定月份的月度账面记录，用于按月累计结转链。 */
+    @Query("SELECT * FROM monthly_summary WHERE month < :month ORDER BY month")
+    suspend fun getPastMonthlySummaries(month: String): List<MonthlySummary>
 }
